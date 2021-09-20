@@ -56,6 +56,8 @@ void AHiker::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AHiker::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &AHiker::StopRunning);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AHiker::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AHiker::MoveRight);
@@ -67,35 +69,6 @@ void AHiker::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAxis("TurnRate", this, &AHiker::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AHiker::LookUpAtRate);
-
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AHiker::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AHiker::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AHiker::OnResetVR);
-}
-
-
-void AHiker::OnResetVR()
-{
-	// If HikingPrototype is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in HikingPrototype.Build.cs is not automatically propagated
-	// and a linker error will result.
-	// You will need to either:
-	//		Add "HeadMountedDisplay" to [YourProject].Build.cs PublicDependencyModuleNames in order to build successfully (appropriate if supporting VR).
-	// or:
-	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AHiker::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void AHiker::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
 }
 
 void AHiker::TurnAtRate(float Rate)
@@ -137,4 +110,14 @@ void AHiker::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void AHiker::Run()
+{
+	GetCharacterMovement()->MaxWalkSpeed = MaxRunSpeed;
+}
+
+void AHiker::StopRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 }

@@ -30,15 +30,14 @@ public:
 	float BaseLookUpRate;
 
 protected:
-
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
-
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	void Run();
+	void StopRunning();
 
 	/** 
 	 * Called via input to turn at a given rate. 
@@ -52,16 +51,17 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Handler for when a touch input begins. */
-	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
-
-	/** Handler for when a touch input stops. */
-	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
-
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+
+protected:
+	//movement speed variables
+	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
+	float MaxWalkSpeed = 200.f;
+	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
+	float MaxRunSpeed = 350.f;
 
 public:
 	/** Returns CameraBoom subobject **/
