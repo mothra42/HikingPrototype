@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	UFUNCTION(BlueprintCallable)
+	bool bCheckIfOnInteractableTerrain();
+
 protected:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);

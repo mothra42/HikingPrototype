@@ -121,3 +121,12 @@ void AHiker::StopRunning()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 }
+
+bool AHiker::bCheckIfOnInteractableTerrain()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Foot Is Down"));
+	//check if hiker is overlapping with any interactable terrain
+
+	//if it is then call appropritate method in interactable terrain component.
+	return false;
+}
