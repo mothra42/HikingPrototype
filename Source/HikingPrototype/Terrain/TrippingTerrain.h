@@ -19,9 +19,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
+	class USceneComponent* Root;
+
+	UPROPERTY(Category = "Tripping Settings", EditAnywhere, BlueprintReadWrite)
 	class UTrippingTerrainComponent* TrippingTerrainComponent;
 
-	class UStaticMeshComponent* CollisionBoundsBox;
+	UPROPERTY(Category = "Collision Settings", EditAnywhere, BlueprintReadWrite)
+	class UBoxComponent* CollisionBoundsBox;
 
 public:	
 	// Called every frame
