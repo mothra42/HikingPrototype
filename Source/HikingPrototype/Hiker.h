@@ -66,6 +66,10 @@ protected:
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
 	float MaxRunSpeed = 350.f;
 
+	//EnvironmentalInteractionComponent
+	UPROPERTY(Category = "Environmental Interaction", EditDefaultsOnly, BlueprintReadOnly)
+	class UEnvironmentalInteractionComp* EnvironmentalInteractionComponent;
+
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Terrain/TrippingTerrain.h"
+#include "Player/PlayerComponents/EnvironmentalInteractionComp.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AHikingPrototypeCharacter
@@ -45,6 +47,10 @@ AHiker::AHiker()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	//Setup Evironmental Interaction Component
+	EnvironmentalInteractionComponent = CreateDefaultSubobject<UEnvironmentalInteractionComp>(TEXT("Environmental Interaction Comp"));
+	EnvironmentalInteractionComponent->SetHikerParent(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -124,9 +130,19 @@ void AHiker::StopRunning()
 
 bool AHiker::bCheckIfOnInteractableTerrain()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Foot Is Down"));
+	TArray<AActor*> OverlappingActors;
 	//check if hiker is overlapping with any interactable terrain
-
+	//Possible optimization later, consider filtering by a parent Interactable Terrain Class
+	GetOverlappingActors(OverlappingActors);
+	for (AActor* TerrainActor : OverlappingActors)
+	{
+		//TODO make more general for any interactable terrain
+		ATrippingTerrain* TrippingTerrain = Cast<ATrippingTerrain>(TerrainActor);
+		if (TrippingTerrain != nullptr)
+		{
+			EnvironmentalInteractionComponent->TryToTripHiker(TrippingTerrain);
+		}
+	}
 	//if it is then call appropritate method in interactable terrain component.
 	return false;
 }
