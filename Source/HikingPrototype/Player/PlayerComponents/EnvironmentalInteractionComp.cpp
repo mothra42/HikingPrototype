@@ -35,12 +35,29 @@ void UEnvironmentalInteractionComp::BeginPlay()
 void UEnvironmentalInteractionComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	// ...
 }
 
-void UEnvironmentalInteractionComp::TryToTripHiker(ATrippingTerrain* TrippingTerrain)
+
+void UEnvironmentalInteractionComp::CheckForInteractions()
+{
+	TArray<AActor*> OverlappingActors;
+	//check if hiker is overlapping with any interactable terrain
+	//Possible optimization later, consider filtering by a parent Interactable Terrain Class
+	HikerParent->GetOverlappingActors(OverlappingActors);
+	for (AActor* TerrainActor : OverlappingActors)
+	{
+		//TODO make more general for any interactable terrain
+		ATrippingTerrain* TrippingTerrain = Cast<ATrippingTerrain>(TerrainActor);
+		if (TrippingTerrain != nullptr)
+		{
+			//if it is then call appropritate method in interactable terrain component.
+			HandleTrippingHiker(TrippingTerrain);
+		}
+	}
+}
+
+void UEnvironmentalInteractionComp::HandleTrippingHiker(ATrippingTerrain* TrippingTerrain)
 {
 	UE_LOG(LogTemp, Warning, TEXT("trying to trip hiker"));
 }
-

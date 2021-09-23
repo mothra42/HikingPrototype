@@ -18,6 +18,10 @@ class AHiker : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	//EnvironmentalInteractionComponent
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = EnvironentalInteraction, meta = (AllowPrivateAccess = "true"))
+	class UEnvironmentalInteractionComp* EnvironmentalInteractionComponent;
 public:
 	AHiker();
 
@@ -28,9 +32,6 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
-
-	UFUNCTION(BlueprintCallable)
-	bool bCheckIfOnInteractableTerrain();
 
 protected:
 	/** Called for forwards/backward input */
@@ -66,14 +67,15 @@ protected:
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
 	float MaxRunSpeed = 350.f;
 
-	//EnvironmentalInteractionComponent
-	UPROPERTY(Category = "Environmental Interaction", EditDefaultsOnly, BlueprintReadOnly)
-	class UEnvironmentalInteractionComp* EnvironmentalInteractionComponent;
-
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UEnvironmentalInteractionComp* GetEvnironmentalInteractionComponent() const
+	{
+		return EnvironmentalInteractionComponent;
+	}
 };
 

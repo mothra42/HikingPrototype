@@ -127,22 +127,3 @@ void AHiker::StopRunning()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 }
-
-bool AHiker::bCheckIfOnInteractableTerrain()
-{
-	TArray<AActor*> OverlappingActors;
-	//check if hiker is overlapping with any interactable terrain
-	//Possible optimization later, consider filtering by a parent Interactable Terrain Class
-	GetOverlappingActors(OverlappingActors);
-	for (AActor* TerrainActor : OverlappingActors)
-	{
-		//TODO make more general for any interactable terrain
-		ATrippingTerrain* TrippingTerrain = Cast<ATrippingTerrain>(TerrainActor);
-		if (TrippingTerrain != nullptr)
-		{
-			EnvironmentalInteractionComponent->TryToTripHiker(TrippingTerrain);
-		}
-	}
-	//if it is then call appropritate method in interactable terrain component.
-	return false;
-}
