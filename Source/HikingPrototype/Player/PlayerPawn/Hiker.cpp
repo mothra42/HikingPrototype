@@ -8,8 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Terrain/TrippingTerrain.h"
-#include "Player/PlayerComponents/EnvironmentalInteractionComp.h"
+#include "../../Terrain/TrippingTerrain.h"
+#include "../PlayerComponents/EnvironmentalInteractionComp.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AHikingPrototypeCharacter

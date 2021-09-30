@@ -31,7 +31,7 @@ public:
 	void SetHikerParent(AHiker* Hiker);
 
 	UFUNCTION(BlueprintCallable)
-		void CheckForInteractions();
+	void CheckForInteractions();
 
 	void HandleTrippingHiker(class ATrippingTerrain* TrippingTerrain);
 

@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "HikingGameMode.h"
-#include "Hiker.h"
+#include "../Player/PlayerPawn/Hiker.h"
 #include "UObject/ConstructorHelpers.h"
 
 AHikingGameMode::AHikingGameMode()

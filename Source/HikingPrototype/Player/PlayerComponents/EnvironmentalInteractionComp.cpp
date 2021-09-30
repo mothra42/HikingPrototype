@@ -2,8 +2,10 @@
 
 
 #include "EnvironmentalInteractionComp.h"
-#include "../../Hiker.h"
+#include "../../Player/PlayerPawn/Hiker.h"
 #include "../../Terrain/TrippingTerrain.h"
+#include "../../TerrainMechanics/TrippingTerrainComponent.h"
+#include "../../Player/PlayerAnimation/HikerAnimInstance.h"
 
 // Sets default values for this component's properties
 UEnvironmentalInteractionComp::UEnvironmentalInteractionComp()
@@ -38,7 +40,7 @@ void UEnvironmentalInteractionComp::TickComponent(float DeltaTime, ELevelTick Ti
 	// ...
 }
 
-
+//this is just a bool for testing
 void UEnvironmentalInteractionComp::CheckForInteractions()
 {
 	TArray<AActor*> OverlappingActors;
@@ -57,7 +59,13 @@ void UEnvironmentalInteractionComp::CheckForInteractions()
 	}
 }
 
+//this is just a bool for testing
 void UEnvironmentalInteractionComp::HandleTrippingHiker(ATrippingTerrain* TrippingTerrain)
 {
 	UE_LOG(LogTemp, Warning, TEXT("trying to trip hiker"));
+	//if (TrippingTerrain->GetTrippingTerrainComponent()->bPlayerShouldTrip(HikerParent->GetCharacterMovement()))
+
+	//TODO
+	//If the hiker is tripped need to notify anim instance to set IsTripped to true
+	//Should also call anything else that needs to be triggered when the hiker is tripped.
 }
