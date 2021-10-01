@@ -63,7 +63,7 @@ protected:
 protected:
 	//movement speed variables
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
-	float MaxWalkSpeed = 200.f;
+	float MaxWalkSpeed = 100.f;
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
 	float MaxRunSpeed = 350.f;
 
@@ -73,7 +73,7 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE UEnvironmentalInteractionComp* GetEvnironmentalInteractionComponent() const
+	FORCEINLINE UEnvironmentalInteractionComp* GetEnvironmentalInteractionComponent() const
 	{
 		return EnvironmentalInteractionComponent;
 	}
