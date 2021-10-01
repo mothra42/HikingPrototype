@@ -24,7 +24,7 @@ protected:
 protected:
 	//Probability to Trip Player.
 	UPROPERTY(Category = "Trip Probability", EditAnywhere, BlueprintReadOnly)
-	float TripProbability = 0.01f;
+	float TripProbability = 0.001f;
 public:	
 	//function that is called from the Hiker's Character Force Component to check if the player should trip.
 	//should scale with the player's current speed. If they are going faster then likelihood of tripping is higher.

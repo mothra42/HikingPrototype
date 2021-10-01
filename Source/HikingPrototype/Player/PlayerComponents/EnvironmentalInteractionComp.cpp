@@ -41,7 +41,7 @@ void UEnvironmentalInteractionComp::TickComponent(float DeltaTime, ELevelTick Ti
 }
 
 //this is just a bool for testing
-void UEnvironmentalInteractionComp::CheckForInteractions()
+void UEnvironmentalInteractionComp::CheckForInteractions(UHikerAnimInstance* HikerAnimInstance)
 {
 	TArray<AActor*> OverlappingActors;
 	//check if hiker is overlapping with any interactable terrain
@@ -54,18 +54,21 @@ void UEnvironmentalInteractionComp::CheckForInteractions()
 		if (TrippingTerrain != nullptr)
 		{
 			//if it is then call appropritate method in interactable terrain component.
-			HandleTrippingHiker(TrippingTerrain);
+			HandleTrippingHiker(TrippingTerrain, HikerAnimInstance);
 		}
 	}
 }
 
 //this is just a bool for testing
-void UEnvironmentalInteractionComp::HandleTrippingHiker(ATrippingTerrain* TrippingTerrain)
+void UEnvironmentalInteractionComp::HandleTrippingHiker(ATrippingTerrain* TrippingTerrain, UHikerAnimInstance* HikerAnimInstance)
 {
 	UE_LOG(LogTemp, Warning, TEXT("trying to trip hiker"));
-	//if (TrippingTerrain->GetTrippingTerrainComponent()->bPlayerShouldTrip(HikerParent->GetCharacterMovement()))
-
+	float HikerSpeed = HikerParent->GetVelocity().Size();
+	if (TrippingTerrain->GetTrippingTerrainComponent()->bPlayerShouldTrip(HikerSpeed))
+	{
+		//If the hiker is tripped need to notify anim instance to set IsTripped to true
+		HikerAnimInstance->bIsTripped = true;
+	}	
 	//TODO
-	//If the hiker is tripped need to notify anim instance to set IsTripped to true
 	//Should also call anything else that needs to be triggered when the hiker is tripped.
 }

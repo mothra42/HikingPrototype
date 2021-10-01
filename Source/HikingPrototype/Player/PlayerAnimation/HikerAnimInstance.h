@@ -13,7 +13,13 @@ UCLASS()
 class HIKINGPROTOTYPE_API UHikerAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
+private:
+	class UEnvironmentalInteractionComp* OwnerEnvInteractionComp;
 
+	UFUNCTION(BlueprintCallable)
+	void AcknowledgeFootDown();
+
+	void SetOwnerEnvInteractionComp();
 
 public:
 	UPROPERTY(Category = State, EditDefaultsOnly, BlueprintReadWrite)
@@ -27,4 +33,6 @@ public:
 
 
 	virtual void NativeUpdateAnimation(float DeltaTimeX) override;
+
+	virtual void NativeBeginPlay() override;
 };

@@ -2,6 +2,7 @@
 
 
 #include "TrippingTerrainComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UTrippingTerrainComponent::UTrippingTerrainComponent()
@@ -19,14 +20,16 @@ void UTrippingTerrainComponent::BeginPlay()
 	
 }
 
-//called from Player's Character Force Component
+//called from Player's EnvironmentalInteractionComponent
 bool UTrippingTerrainComponent::bPlayerShouldTrip(float CurrentHikerSpeed)
 {
 	//Calculate if the player should trip based on Trip Probability and other factors
 	//Other factors should be current speed. The angle the hiker is currently on.
 	//whether they are accelerating to become faster or slower.
 	//returns a simple boolean if the player trips or not.
-
-	return false;
+	float TripWeight = CurrentHikerSpeed * TripProbability;
+	UE_LOG(LogTemp, Warning, TEXT("Trip Weight is %f"), TripWeight);
+	UE_LOG(LogTemp, Warning, TEXT("Hiker Speed is %f"), CurrentHikerSpeed);
+	return UKismetMathLibrary::RandomBoolWithWeight(CurrentHikerSpeed * TripProbability);
 }
 
