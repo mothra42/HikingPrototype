@@ -47,3 +47,14 @@ void UHikerAnimInstance::AcknowledgeFootDown()
 		SetOwnerEnvInteractionComp();
 	}
 }
+
+//Called from Animation Blueprint everytime TripComplete Notify fires
+void UHikerAnimInstance::AcknowledgeTripComplete()
+{
+	//TODO potential failure point here, if ownerEnvInterationComp 
+	//is null permanent controller disable could occur
+	if (OwnerEnvInteractionComp != nullptr)
+	{
+		OwnerEnvInteractionComp->CompleteTrippingHiker(this);
+	}
+}

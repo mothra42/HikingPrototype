@@ -6,6 +6,7 @@
 #include "../../Terrain/TrippingTerrain.h"
 #include "../../TerrainMechanics/TrippingTerrainComponent.h"
 #include "../../Player/PlayerAnimation/HikerAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UEnvironmentalInteractionComp::UEnvironmentalInteractionComp()
@@ -68,7 +69,17 @@ void UEnvironmentalInteractionComp::HandleTrippingHiker(ATrippingTerrain* Trippi
 	{
 		//If the hiker is tripped need to notify anim instance to set IsTripped to true
 		HikerAnimInstance->bIsTripped = true;
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		//TODO make it so only movement input is blocked, camera can still be rotated.
+		HikerParent->DisableInput(PlayerController);
+		HikerParent->StopRunning();
+		//Should also call anything else that needs to be triggered when the hiker is tripped.
 	}	
-	//TODO
-	//Should also call anything else that needs to be triggered when the hiker is tripped.
+}
+
+void UEnvironmentalInteractionComp::CompleteTrippingHiker(UHikerAnimInstance* HikerAnimInstance)
+{
+	HikerAnimInstance->bIsTripped = false;
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	HikerParent->EnableInput(PlayerController);
 }

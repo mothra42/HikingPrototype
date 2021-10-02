@@ -19,6 +19,9 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void AcknowledgeFootDown();
 
+	UFUNCTION(BlueprintCallable)
+	void AcknowledgeTripComplete();
+
 	void SetOwnerEnvInteractionComp();
 
 public:

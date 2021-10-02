@@ -33,6 +33,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
+	void StopRunning();
+
 protected:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -41,7 +43,6 @@ protected:
 	void MoveRight(float Value);
 
 	void Run();
-	void StopRunning();
 
 	/** 
 	 * Called via input to turn at a given rate. 

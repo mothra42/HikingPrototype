@@ -35,5 +35,7 @@ public:
 
 	void HandleTrippingHiker(class ATrippingTerrain* TrippingTerrain, UHikerAnimInstance* HikerAnimInstance);
 
+	void CompleteTrippingHiker(UHikerAnimInstance* HikerAnimInstance);
+
 		
 };
