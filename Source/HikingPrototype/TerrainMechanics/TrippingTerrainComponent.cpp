@@ -27,9 +27,7 @@ bool UTrippingTerrainComponent::bPlayerShouldTrip(float CurrentHikerSpeed)
 	//Other factors should be current speed. The angle the hiker is currently on.
 	//whether they are accelerating to become faster or slower.
 	//returns a simple boolean if the player trips or not.
-	float TripWeight = CurrentHikerSpeed * TripProbability;
-	UE_LOG(LogTemp, Warning, TEXT("Trip Weight is %f"), TripWeight);
-	UE_LOG(LogTemp, Warning, TEXT("Hiker Speed is %f"), CurrentHikerSpeed);
-	return UKismetMathLibrary::RandomBoolWithWeight(CurrentHikerSpeed * TripProbability);
+	float TripWeight = FMath::Square(CurrentHikerSpeed * TripProbability);
+	return UKismetMathLibrary::RandomBoolWithWeight(TripWeight);
 }
 
