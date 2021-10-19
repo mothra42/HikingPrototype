@@ -30,12 +30,26 @@ public:
 
 	void SetHikerParent(AHiker* Hiker);
 
+	//called via animation notify every time the hiker takes a step.
 	UFUNCTION(BlueprintCallable)
 	void CheckForInteractions(class UHikerAnimInstance* HikerAnimInstance);
 
+//Tripping Related Methods
+public:
 	void HandleTrippingHiker(class ATrippingTerrain* TrippingTerrain, UHikerAnimInstance* HikerAnimInstance);
 
 	void CompleteTrippingHiker(UHikerAnimInstance* HikerAnimInstance);
 
-		
+//Climbin Related Methods
+public:
+	UFUNCTION(BlueprintCallable)
+	void CheckForClimbingAlignment();
+
+protected:
+	UPROPERTY(Category = "Sweep Settings", EditDefaultsOnly)
+	float SphereSweepRadius = 97.f;
+
+	FVector FindClimbableSurfaceAlignmentVector(const FHitResult& Hit);
+
+	bool bShouldDisplayClimbPrompt(TArray<FHitResult>& Hits);
 };

@@ -9,7 +9,12 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "../../Terrain/TrippingTerrain.h"
+#include "../../Terrain/ClimbableTerrain.h"
 #include "../PlayerComponents/EnvironmentalInteractionComp.h"
+#include "../PlayerAnimation/HikerAnimInstance.h"
+#include "Kismet/GameplayStatics.h"
+//DEV ONLY
+#include "DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AHikingPrototypeCharacter
@@ -54,6 +59,12 @@ AHiker::AHiker()
 	EnvironmentalInteractionComponent->SetHikerParent(this);
 }
 
+void AHiker::BeginPlay()
+{
+	Super::BeginPlay();
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AHiker::OnHit);
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -65,9 +76,12 @@ void AHiker::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AHiker::Run);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &AHiker::StopRunning);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &AHiker::Interact);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AHiker::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AHiker::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AHiker::MoveUp);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AHiker::StrafeClimbRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -92,7 +106,7 @@ void AHiker::LookUpAtRate(float Rate)
 
 void AHiker::MoveForward(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
+	if ((Controller != nullptr) && (Value != 0.0f) && !bIsClimbing)
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -106,7 +120,7 @@ void AHiker::MoveForward(float Value)
 
 void AHiker::MoveRight(float Value)
 {
-	if ( (Controller != nullptr) && (Value != 0.0f) )
+	if ( (Controller != nullptr) && (Value != 0.0f) && !bIsClimbing)
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -119,6 +133,28 @@ void AHiker::MoveRight(float Value)
 	}
 }
 
+void AHiker::MoveUp(float Value)
+{
+	if (Controller != nullptr && Value != 0.0f && bIsClimbing)
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		// get forward vector
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+		AddMovementInput(Direction, Value);
+		UE_LOG(LogTemp, Warning, TEXT("Velocity is %s"), *GetCharacterMovement()->Velocity.ToString());
+	}
+}
+
+void AHiker::StrafeClimbRight(float Value)
+{
+	if (Controller != nullptr && Value != 0.0f && bIsClimbing)
+	{
+
+	}
+}
+
 void AHiker::Run()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxRunSpeed;
@@ -127,4 +163,48 @@ void AHiker::Run()
 void AHiker::StopRunning()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
+//Interactions
+void AHiker::OnHit(UPrimitiveComponent* HitComp,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse,
+	const FHitResult& Hit)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Hit Actor's name is %s"), *OtherActor->GetName());
+	AClimbableTerrain* ClimbableTerrain = Cast<AClimbableTerrain>(OtherActor);
+	if (ClimbableTerrain != nullptr)
+	{
+		//FVector EndpointofNormalTestLine = Hit.Location + 100 * Hit.Normal;
+		//FVector CrossAlignVectorTest = FVector::CrossProduct(GetActorRightVector(), Hit.Normal);
+		//FVector EndpointOfCrossAlightVectorTestLine = Hit.Location + 100 * CrossAlignVectorTest;
+		//DrawDebugLine(GetWorld(), Hit.Location, EndpointofNormalTestLine, FColor::Blue, false, 10.0);
+		//DrawDebugLine(GetWorld(), Hit.Location, EndpointOfCrossAlightVectorTestLine, FColor::Red, false, 10.0);
+		//AlignSelfWithVector(CrossAlignVectorTest); //TEST ONLY
+	}
+}
+
+void AHiker::Interact()
+{
+	//for now just being used to test climbing
+
+	//TODO need to figure out a system for this to call the animation instance class 
+	//in order to set the climbing variable in that class to true as well so the climbing animation can play.
+	//after this its just a matter of playing the animation and moving the character up and down.
+	bIsClimbing = true;
+	UHikerAnimInstance* HikerAnimInstance = Cast<UHikerAnimInstance>(GetMesh()->AnimClass);
+	//this is null for some reason. TODO figure this out.
+	if (HikerAnimInstance != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Found Hiker Anim Instance"));
+		HikerAnimInstance->bIsClimbing = true;
+	}
+}
+
+void AHiker::AlignSelfWithVector(FVector AlignmentVector)
+{
+	//Aligns the hiker's z direction to the slope of the current surface.
+	FRotator MyRotator = FRotationMatrix::MakeFromZX(AlignmentVector.GetSafeNormal(), GetActorForwardVector()).Rotator();
+	SetActorRotation(MyRotator);
 }

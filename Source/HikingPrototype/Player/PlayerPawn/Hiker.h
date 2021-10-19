@@ -22,6 +22,8 @@ class AHiker : public ACharacter
 	//EnvironmentalInteractionComponent
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = EnvironentalInteraction, meta = (AllowPrivateAccess = "true"))
 	class UEnvironmentalInteractionComp* EnvironmentalInteractionComponent;
+
+	bool bIsClimbing = false;
 public:
 	AHiker();
 
@@ -36,6 +38,13 @@ public:
 	void StopRunning();
 
 protected:
+	virtual void BeginPlay() override;
+
+	//Experimental Momentum Movement
+	//bool bIsMovingForward;
+	//bool bIsTurningRight;
+	float HikerAccelerationMagnitude = 500.f;
+	FVector HikerVelocity = FVector(0.f, 0.f, 0.f);
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -56,10 +65,18 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	//climbing movement function
+	void MoveUp(float Value);
+
+	void StrafeClimbRight(float Value);
+
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	// End of APawn interface
+
+	//TODO should be made fairly general to accept any sort of interaction and route to the correct behavior.
+	void Interact();
 
 protected:
 	//movement speed variables
@@ -67,6 +84,14 @@ protected:
 	float MaxWalkSpeed = 100.f;
 	UPROPERTY(Category = "Movement", EditDefaultsOnly, BlueprintReadOnly)
 	float MaxRunSpeed = 350.f;
+
+public:
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComp, 
+			AActor* OtherActor, 
+			UPrimitiveComponent* OtherComp, 
+			FVector NormalImpulse, 
+			const FHitResult& Hit);
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -78,5 +103,9 @@ public:
 	{
 		return EnvironmentalInteractionComponent;
 	}
+
+//Climbing Related methods
+public:
+	void AlignSelfWithVector(FVector AlignmentVector);
 };
 
