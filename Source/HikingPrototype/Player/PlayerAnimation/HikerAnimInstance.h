@@ -34,6 +34,9 @@ public:
 	UPROPERTY(Category = State, EditDefaultsOnly, BlueprintReadWrite)
 	float Speed;
 
+	UPROPERTY(Category = State, EditDefaultsOnly, BlueprintReadWrite)
+	bool bIsClimbing = false;
+
 
 	virtual void NativeUpdateAnimation(float DeltaTimeX) override;
 
