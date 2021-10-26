@@ -45,7 +45,7 @@ public:
 //Climbin Related Methods
 public:
 	UFUNCTION(BlueprintCallable)
-	void CheckForClimbingAlignment();
+	void FindClimbingAlignment();
 
 protected:
 	UPROPERTY(Category = "Trace Settings", EditDefaultsOnly)
@@ -54,9 +54,12 @@ protected:
 	UPROPERTY(Category = "Climb Settings", EditDefaultsOnly)
 	float MaximumWalkAngle = 45.0f;
 
-	FVector FindClimbableSurfaceAlignmentVector(const FHitResult& Hit);
+	void CheckForClimbingInteractions();
 
 	bool bShouldDisplayClimbPrompt(FHitResult& Hit);
+
+private:
+	FVector FindClimbableSurfaceAlignmentVector(const FHitResult& Hit);
 
 	float FindSlopeOfClimbableSurface(const FHitResult& Hit);
 };

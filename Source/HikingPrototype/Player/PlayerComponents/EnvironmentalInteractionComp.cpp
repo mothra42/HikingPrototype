@@ -49,7 +49,6 @@ void UEnvironmentalInteractionComp::TickComponent(float DeltaTime, ELevelTick Ti
 void UEnvironmentalInteractionComp::CheckForInteractions(UHikerAnimInstance* HikerAnimInstance)
 {
 	TArray<AActor*> OverlappingActors;
-	FHitResult ClimbableSurfaceHit;
 	//check if hiker is overlapping with any interactable terrain
 	//Possible optimization later, consider filtering by a parent Interactable Terrain Class
 	HikerParent->GetOverlappingActors(OverlappingActors);
@@ -64,37 +63,7 @@ void UEnvironmentalInteractionComp::CheckForInteractions(UHikerAnimInstance* Hik
 		}
 	}
 
-	//TODO need to monitor performance to see if this is a viable option.
-	//TODO also refactor this out into its own function.
-	for (float degrees = 0.f; degrees <= 360.f; degrees += 45.f)
-	{
-		FRotator Rotation = FRotator(0.f, degrees, 0.f);
-		FVector RotatedVectorDirection = Rotation.RotateVector(HikerParent->GetActorForwardVector());
-	
-		bool bLineTraceHit = GetWorld()->LineTraceSingleByProfile(
-			ClimbableSurfaceHit, 
-			HikerParent->GetActorLocation(),
-			HikerParent->GetActorLocation() + (LineTraceLength * RotatedVectorDirection),
-			FName("ClimbingProfile")
-		);
-
-		//DEV ONLY ----------------------------------------------------------------------------------------------
-		FVector LineTraceEndpoint = HikerParent->GetActorLocation() + (LineTraceLength * RotatedVectorDirection);
-		DrawDebugLine(GetWorld(), HikerParent->GetActorLocation(), LineTraceEndpoint, FColor::Green, false, 5.f);
-		//DEV ONLY END -------------------------------------------------------------------------------------------
-
-		if (bLineTraceHit)
-		{
-			if (bShouldDisplayClimbPrompt(ClimbableSurfaceHit))
-			{
-				//TODO probably trigger some UI stuff here.
-				UE_LOG(LogTemp, Warning, TEXT("Hiker should Climb Surface %s, at %s"), *ClimbableSurfaceHit.Actor->GetName(), *ClimbableSurfaceHit.ImpactPoint.ToString());
-				//if we find a hit and it is valid and a climb prompt is shown
-				//we no longer need to keep line tracing on this check. 
-				break;
-			}
-		}
-	}
+	CheckForClimbingInteractions();
 }
 
 //Tripping Methods------------------------------------------------------------------------------------------------------
@@ -124,7 +93,41 @@ void UEnvironmentalInteractionComp::CompleteTrippingHiker(UHikerAnimInstance* Hi
 
 //Climbing Methods------------------------------------------------------------------------------------------------------
 
-void UEnvironmentalInteractionComp::CheckForClimbingAlignment()
+void UEnvironmentalInteractionComp::CheckForClimbingInteractions()
+{
+	FHitResult ClimbableSurfaceHit;
+	for (float degrees = 0.f; degrees <= 360.f; degrees += 45.f)
+	{
+		FRotator Rotation = FRotator(0.f, degrees, 0.f);
+		FVector RotatedVectorDirection = Rotation.RotateVector(HikerParent->GetActorForwardVector());
+
+		bool bLineTraceHit = GetWorld()->LineTraceSingleByProfile(
+			ClimbableSurfaceHit,
+			HikerParent->GetActorLocation(),
+			HikerParent->GetActorLocation() + (LineTraceLength * RotatedVectorDirection),
+			FName("ClimbingProfile")
+		);
+
+		//DEV ONLY ----------------------------------------------------------------------------------------------
+		FVector LineTraceEndpoint = HikerParent->GetActorLocation() + (LineTraceLength * RotatedVectorDirection);
+		DrawDebugLine(GetWorld(), HikerParent->GetActorLocation(), LineTraceEndpoint, FColor::Green, false, 5.f);
+		//DEV ONLY END -------------------------------------------------------------------------------------------
+
+		if (bLineTraceHit)
+		{
+			if (bShouldDisplayClimbPrompt(ClimbableSurfaceHit))
+			{
+				//TODO probably trigger some UI stuff here.
+				UE_LOG(LogTemp, Warning, TEXT("Hiker should Climb Surface %s, at %s"), *ClimbableSurfaceHit.Actor->GetName(), *ClimbableSurfaceHit.ImpactPoint.ToString());
+				//if we find a hit and it is valid and a climb prompt is shown
+				//we no longer need to keep line tracing on this check. 
+				break;
+			}
+		}
+	}
+}
+
+void UEnvironmentalInteractionComp::FindClimbingAlignment()
 {
 	FHitResult HitResult;
 	FVector EndTraceLocation = HikerParent->GetActorLocation() + (HikerParent->GetActorForwardVector() * 100);
@@ -140,7 +143,8 @@ FVector UEnvironmentalInteractionComp::FindClimbableSurfaceAlignmentVector(const
 bool UEnvironmentalInteractionComp::bShouldDisplayClimbPrompt(FHitResult& Hit)
 {
 	float ClimbableSurfaceSlope = FindSlopeOfClimbableSurface(Hit);
-	if (ClimbableSurfaceSlope >=  45.0f + FloatMarginOfError || ClimbableSurfaceSlope >= 45.0f - FloatMarginOfError)
+	if (ClimbableSurfaceSlope >= MaximumWalkAngle + FloatMarginOfError || 
+		ClimbableSurfaceSlope >= MaximumWalkAngle - FloatMarginOfError)
 	{
 		return true;
 	}
