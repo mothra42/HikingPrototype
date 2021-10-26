@@ -24,6 +24,8 @@ private:
 	//Owner Hiker Class
 	class AHiker* HikerParent;
 
+	float FloatMarginOfError = 0.5;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -46,10 +48,15 @@ public:
 	void CheckForClimbingAlignment();
 
 protected:
-	UPROPERTY(Category = "Sweep Settings", EditDefaultsOnly)
-	float SphereSweepRadius = 97.f;
+	UPROPERTY(Category = "Trace Settings", EditDefaultsOnly)
+	float LineTraceLength = 150.0f;
+
+	UPROPERTY(Category = "Climb Settings", EditDefaultsOnly)
+	float MaximumWalkAngle = 45.0f;
 
 	FVector FindClimbableSurfaceAlignmentVector(const FHitResult& Hit);
 
-	bool bShouldDisplayClimbPrompt(TArray<FHitResult>& Hits);
+	bool bShouldDisplayClimbPrompt(FHitResult& Hit);
+
+	float FindSlopeOfClimbableSurface(const FHitResult& Hit);
 };
