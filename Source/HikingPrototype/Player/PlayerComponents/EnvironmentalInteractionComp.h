@@ -44,8 +44,11 @@ public:
 
 //Climbin Related Methods
 public:
+	//vector used to set alignment on the hiker
+	FVector ClimbingAlignmentVector;
+
 	UFUNCTION(BlueprintCallable)
-	void FindClimbingAlignment();
+	FVector UpdateClimbingAlignmentVector();
 
 protected:
 	UPROPERTY(Category = "Trace Settings", EditDefaultsOnly)
@@ -53,6 +56,8 @@ protected:
 
 	UPROPERTY(Category = "Climb Settings", EditDefaultsOnly)
 	float MaximumWalkAngle = 45.0f;
+
+
 
 	void CheckForClimbingInteractions();
 

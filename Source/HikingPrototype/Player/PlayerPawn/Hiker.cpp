@@ -172,17 +172,18 @@ void AHiker::OnHit(UPrimitiveComponent* HitComp,
 	FVector NormalImpulse,
 	const FHitResult& Hit)
 {
+	//TODO might be useful to keep this around to realign with a climbing surface.
 	//UE_LOG(LogTemp, Warning, TEXT("Hit Actor's name is %s"), *OtherActor->GetName());
-	AClimbableTerrain* ClimbableTerrain = Cast<AClimbableTerrain>(OtherActor);
-	if (ClimbableTerrain != nullptr)
-	{
-		//FVector EndpointofNormalTestLine = Hit.Location + 100 * Hit.Normal;
-		//FVector CrossAlignVectorTest = FVector::CrossProduct(GetActorRightVector(), Hit.Normal);
-		//FVector EndpointOfCrossAlightVectorTestLine = Hit.Location + 100 * CrossAlignVectorTest;
-		//DrawDebugLine(GetWorld(), Hit.Location, EndpointofNormalTestLine, FColor::Blue, false, 10.0);
-		//DrawDebugLine(GetWorld(), Hit.Location, EndpointOfCrossAlightVectorTestLine, FColor::Red, false, 10.0);
-		//AlignSelfWithVector(CrossAlignVectorTest); //TEST ONLY
-	}
+	//AClimbableTerrain* ClimbableTerrain = Cast<AClimbableTerrain>(OtherActor);
+	//if (ClimbableTerrain != nullptr)
+	//{
+	//	//FVector EndpointofNormalTestLine = Hit.Location + 100 * Hit.Normal;
+	//	//FVector CrossAlignVectorTest = FVector::CrossProduct(GetActorRightVector(), Hit.Normal);
+	//	//FVector EndpointOfCrossAlightVectorTestLine = Hit.Location + 100 * CrossAlignVectorTest;
+	//	//DrawDebugLine(GetWorld(), Hit.Location, EndpointofNormalTestLine, FColor::Blue, false, 10.0);
+	//	//DrawDebugLine(GetWorld(), Hit.Location, EndpointOfCrossAlightVectorTestLine, FColor::Red, false, 10.0);
+	//	//AlignSelfWithVector(CrossAlignVectorTest); //TEST ONLY
+	//}
 }
 
 void AHiker::Interact()
@@ -200,6 +201,8 @@ void AHiker::Interact()
 		UE_LOG(LogTemp, Warning, TEXT("Found Hiker Anim Instance"));
 		HikerAnimInstance->bIsClimbing = true;
 	}
+
+	AlignSelfWithVector(EnvironmentalInteractionComponent->ClimbingAlignmentVector);
 }
 
 void AHiker::AlignSelfWithVector(FVector AlignmentVector)

@@ -117,6 +117,8 @@ void UEnvironmentalInteractionComp::CheckForClimbingInteractions()
 		{
 			if (bShouldDisplayClimbPrompt(ClimbableSurfaceHit))
 			{
+				ClimbingAlignmentVector = FindClimbableSurfaceAlignmentVector(ClimbableSurfaceHit);
+
 				//TODO probably trigger some UI stuff here.
 				UE_LOG(LogTemp, Warning, TEXT("Hiker should Climb Surface %s, at %s"), *ClimbableSurfaceHit.Actor->GetName(), *ClimbableSurfaceHit.ImpactPoint.ToString());
 				//if we find a hit and it is valid and a climb prompt is shown
@@ -127,17 +129,22 @@ void UEnvironmentalInteractionComp::CheckForClimbingInteractions()
 	}
 }
 
-void UEnvironmentalInteractionComp::FindClimbingAlignment()
+FVector UEnvironmentalInteractionComp::UpdateClimbingAlignmentVector()
 {
 	FHitResult HitResult;
-	FVector EndTraceLocation = HikerParent->GetActorLocation() + (HikerParent->GetActorForwardVector() * 100);
-	GetWorld()->LineTraceSingleByChannel(HitResult, HikerParent->GetActorLocation(), EndTraceLocation, ECollisionChannel::ECC_Camera);
-	FVector NewAlignment = FindClimbableSurfaceAlignmentVector(HitResult);
+	GetWorld()->LineTraceSingleByProfile(
+		HitResult,
+		HikerParent->GetActorLocation(),
+		HikerParent->GetActorLocation() + (HikerParent->GetActorForwardVector() * 100),
+		FName("ClimbingProfile")
+	);
+	ClimbingAlignmentVector = FindClimbableSurfaceAlignmentVector(HitResult);
+	return ClimbingAlignmentVector;
 }
 
 FVector UEnvironmentalInteractionComp::FindClimbableSurfaceAlignmentVector(const FHitResult& Hit)
 {
-	return FVector::CrossProduct(HikerParent->GetActorRightVector(), Hit.ImpactNormal);
+	return FVector::CrossProduct(FVector::CrossProduct(FVector::DownVector, Hit.Normal).GetSafeNormal(), Hit.ImpactNormal).GetSafeNormal();
 }
 
 bool UEnvironmentalInteractionComp::bShouldDisplayClimbPrompt(FHitResult& Hit)
