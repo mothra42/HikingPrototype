@@ -80,8 +80,8 @@ void AHiker::SetupPlayerInputComponent(class UInputComponent* PlayerInputCompone
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AHiker::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AHiker::MoveRight);
-	PlayerInputComponent->BindAxis("MoveForward", this, &AHiker::MoveUp);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AHiker::StrafeClimbRight);
+	//PlayerInputComponent->BindAxis("MoveForward", this, &AHiker::MoveUp);
+	//PlayerInputComponent->BindAxis("MoveRight", this, &AHiker::StrafeClimbRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -106,7 +106,7 @@ void AHiker::LookUpAtRate(float Rate)
 
 void AHiker::MoveForward(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f) && !bIsClimbing)
+	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -120,7 +120,7 @@ void AHiker::MoveForward(float Value)
 
 void AHiker::MoveRight(float Value)
 {
-	if ( (Controller != nullptr) && (Value != 0.0f) && !bIsClimbing)
+	if ( (Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -203,11 +203,13 @@ void AHiker::Interact()
 	}
 
 	AlignSelfWithVector(EnvironmentalInteractionComponent->ClimbingAlignmentVector);
+	SetActorLocation(EnvironmentalInteractionComponent->ClimbingStartingLocation);
+
 }
 
 void AHiker::AlignSelfWithVector(FVector AlignmentVector)
 {
-	//Aligns the hiker's z direction to the slope of the current surface.
-	FRotator MyRotator = FRotationMatrix::MakeFromZX(AlignmentVector.GetSafeNormal(), GetActorForwardVector()).Rotator();
+	FVector RightVector = FVector::CrossProduct(FVector::UpVector, AlignmentVector).GetSafeNormal();
+	FRotator MyRotator = FRotationMatrix::MakeFromZY(AlignmentVector.GetSafeNormal(), RightVector).Rotator();
 	SetActorRotation(MyRotator);
 }
